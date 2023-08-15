@@ -1,11 +1,6 @@
 package com.retooling.date.controller;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,42 +18,23 @@ public class SimulatorDateController {
 
 	private static final Logger logger = LoggerFactory.getLogger(SimulatorDateController.class);
 
+	private int amountDays;
+	
 	@GetMapping(path = "get-date")
-	public String getFileDate() throws Exception {
-		logger.info("Controller - Calling method getFileDate...");
-
-		String file = "config/fileAmountDays.txt";
-		
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		String amountDays = reader.readLine();
-		reader.close();
-		
+	public String getDate() throws Exception {
+		logger.info("Controller - Calling method getDate...");
 		Date currentDate = new Date();
-
 		Calendar c = Calendar.getInstance();
 		c.setTime(currentDate);
-		c.add(Calendar.DATE, Integer.valueOf(amountDays));
-		currentDate = c.getTime();
-		
+		c.add(Calendar.DATE, amountDays);
+		currentDate = c.getTime();		
 		return (new SimpleDateFormat("yyyyMMddHHmmss").format(currentDate));
 	}
 
 	@PostMapping(path = "set-date")
-	public String addDays(@RequestBody String amountDays) throws IOException {
+	public String addDays(@RequestBody int reqAmountDays) throws IOException {
 		logger.info("Controller - Calling method addDays...");
-
-		String file = "config/fileAmountDays.txt";
-		
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		String daysInFile = reader.readLine();
-		reader.close();
-		
-		FileWriter f = new FileWriter(file,false);
-		BufferedWriter b = new BufferedWriter(f);
-		PrintWriter p = new PrintWriter(b);
-		p.println(Integer.parseInt(amountDays) + Integer.parseInt(daysInFile));
-		p.close();
-		
+		amountDays = amountDays + reqAmountDays;
 		return "OK";				
 	}
 	
